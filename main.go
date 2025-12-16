@@ -40,7 +40,7 @@ func main() {
 
 	// Configurar las rutas
 	http.HandleFunc("/books", bookHandler.HandleBooks)
-	http.HandleFunc("/books", bookHandler.HandleBookById)
+	http.HandleFunc("/book", bookHandler.HandleBookById)
 
 	fmt.Println("Servidor ejectuándose en http://localhost:8080")
 
