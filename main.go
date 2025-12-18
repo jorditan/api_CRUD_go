@@ -1,20 +1,24 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
+	"main/internal/db"
 	"main/internal/service"
 	"main/internal/store"
 	"main/internal/transport"
+
+	"github.com/joho/godotenv"
+
 	"net/http"
 
 	_ "modernc.org/sqlite"
 )
 
 func main() {
+	_ = godotenv.Load()
 	// Conectar a SQLLite
-	db, err := sql.Open("sqlite", "./books.db")
+	db, err := db.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,9 +28,10 @@ func main() {
 	// Crear el table si no existe
 	q := `
 		CREATE TABLE IF NOT EXISTS books (
-			id INTEGER PRIMARY KEY AUTOINCREMENT, 
+			id SERIAL PRIMARY KEY NOT NULL, 
 			tittle TEXT NOT NULL,
-			author TEXT NOT NULL
+			author TEXT NOT NULL,
+			price NUMERIC(10,2) NOT NULL
 		)
 	`
 	if _, err := db.Exec(q); err != nil {

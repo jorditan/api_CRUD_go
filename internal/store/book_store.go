@@ -32,6 +32,9 @@ type Store interface {
 	// Si no existe o hay error en la DB, devuelve error.
 	GetById(id int) (*model.Libro, error)
 
+	// Obtiene libros por un precio
+	GetByPrice(price float32) ([]*model.Libro, error)
+
 	// Create inserta un nuevo libro en la base de datos.
 	// Devuelve el libro creado con su ID asignado.
 	Create(libro *model.Libro) (*model.Libro, error)
@@ -76,7 +79,7 @@ func New(db *sql.DB) Store {
 func (s *store) GetAll() ([]*model.Libro, error) {
 
 	// Consulta SQL para obtener todos los libros
-	q := `SELECT id, title, author FROM books`
+	q := `SELECT id, title, author, price FROM book`
 
 	// Ejecuta la consulta
 	rows, err := s.db.Query(q)
@@ -120,7 +123,7 @@ func (s *store) GetAll() ([]*model.Libro, error) {
 func (s *store) GetById(id int) (*model.Libro, error) {
 
 	// Consulta SQL con parámetro
-	q := `SELECT id, title, author FROM books WHERE id = ?`
+	q := `SELECT id_book, title, author, price FROM book WHERE id = $1`
 
 	// Se inicializa el struct donde se cargará el resultado
 	libro := &model.Libro{}
@@ -140,30 +143,57 @@ func (s *store) GetById(id int) (*model.Libro, error) {
 	return libro, nil
 }
 
+func (s *store) GetByPrice(price float32) ([]*model.Libro, error) {
+	// Ejecuta la consulta
+	q := `SELECT id_book, title, author, price FROM book WHERE price < $1`
+
+	rows, err := s.db.Query(q, price)
+	if err != nil {
+		// Si ocurre un error, se retorna inmediatamente
+		return nil, err
+	}
+
+	// Asegura que el cursor se cierre al salir de la función
+	defer rows.Close()
+
+	// Se inicializa el struct donde se cargará los resultados
+	var libros []*model.Libro
+
+	for rows.Next() {
+		b := &model.Libro{}
+
+		err := rows.Scan(&b.ID, &b.Titulo, &b.Autor, &b.Price)
+		if err != nil {
+			return nil, err
+		}
+		libros = append(libros, b)
+	}
+
+	return libros, nil
+}
+
 // -----------------------------
 // CREATE
 // -----------------------------
 
 // Create inserta un nuevo libro en la base de datos.
 func (s *store) Create(libro *model.Libro) (*model.Libro, error) {
+	q := `
+		INSERT INTO book (title, author, price)
+		VALUES ($1, $2, $3)
+		RETURNING id_book
+	`
 
-	// Consulta SQL de inserción
-	q := `INSERT INTO books (title, author) VALUES (?, ?)`
+	err := s.db.QueryRow(
+		q,
+		libro.Titulo,
+		libro.Autor,
+		libro.Price,
+	).Scan(&libro.ID)
 
-	// Exec se usa para INSERT, UPDATE y DELETE
-	resp, err := s.db.Exec(q, libro.Titulo, libro.Autor)
 	if err != nil {
 		return nil, err
 	}
-
-	// Obtiene el ID autogenerado por la base de datos
-	id, err := resp.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	// Se asigna el ID al libro
-	libro.ID = int(id)
 
 	return libro, nil
 }
@@ -198,7 +228,7 @@ func (s *store) Update(id int, libro *model.Libro) (*model.Libro, error) {
 func (s *store) Delete(id int) error {
 
 	// Consulta SQL de eliminación
-	q := `DELETE FROM books WHERE id = ?`
+	q := `DELETE FROM books WHERE id_book = ?`
 
 	// Ejecuta el delete
 	_, err := s.db.Exec(q, id)
