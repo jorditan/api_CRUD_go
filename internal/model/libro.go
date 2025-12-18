@@ -3,8 +3,8 @@ package model
 /*Se usan tags para pasar a JSON y especificar como se va a llamar. También se puede hacer con XML*/
 
 type Libro struct {
-	ID     int    `json:"id"`
+	ID     int    `json:"id_book"`
 	Titulo string `json:"title"`
 	Autor  string `json:"author"`
-	Price  string `json:price`
+	Price  string `json:"price"`
 }

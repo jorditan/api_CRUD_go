@@ -99,8 +99,8 @@ func (h *BookHandler) HandleBooks(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Código HTTP 201: recurso creado
-		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(created)
 
 	// -----------------------------

@@ -79,7 +79,7 @@ func New(db *sql.DB) Store {
 func (s *store) GetAll() ([]*model.Libro, error) {
 
 	// Consulta SQL para obtener todos los libros
-	q := `SELECT id, title, author, price FROM book`
+	q := `SELECT id_book, title, author, price FROM book`
 
 	// Ejecuta la consulta
 	rows, err := s.db.Query(q)
@@ -102,7 +102,7 @@ func (s *store) GetAll() ([]*model.Libro, error) {
 		b := &model.Libro{}
 
 		// Se copian las columnas de la fila a los campos del struct
-		err := rows.Scan(&b.ID, &b.Titulo, &b.Autor)
+		err := rows.Scan(&b.ID, &b.Titulo, &b.Autor, &b.Price)
 		if err != nil {
 			return nil, err
 		}
@@ -206,7 +206,7 @@ func (s *store) Create(libro *model.Libro) (*model.Libro, error) {
 func (s *store) Update(id int, libro *model.Libro) (*model.Libro, error) {
 
 	// Consulta SQL de actualización
-	q := `UPDATE books SET title = ?, author = ? WHERE id = ?`
+	q := `UPDATE books SET title = $1, author = $2 WHERE id_book = $3`
 
 	// Ejecuta la actualización
 	_, err := s.db.Exec(q, libro.Titulo, libro.Autor, id)
@@ -228,7 +228,7 @@ func (s *store) Update(id int, libro *model.Libro) (*model.Libro, error) {
 func (s *store) Delete(id int) error {
 
 	// Consulta SQL de eliminación
-	q := `DELETE FROM books WHERE id_book = ?`
+	q := `DELETE FROM books WHERE id_book = $1`
 
 	// Ejecuta el delete
 	_, err := s.db.Exec(q, id)

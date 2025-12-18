@@ -50,5 +50,5 @@ func main() {
 	fmt.Println("Servidor ejectuándose en http://localhost:8080")
 
 	// Empezar y escuchar al servidor
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -20,9 +20,6 @@ import (
 // Logger define una interfaz mínima para registrar mensajes.
 // Se abstrae para no depender de una implementación concreta
 // (log estándar, zap, logrus, etc.)
-type Logger interface {
-	Log(msg, error string)
-}
 
 // -----------------------------
 // SERVICE
@@ -33,8 +30,7 @@ type Logger interface {
 // - Un Store (persistencia)
 // - Un Logger (observabilidad)
 type Service struct {
-	store  store.Store
-	logger Logger
+	store store.Store
 }
 
 // -----------------------------
@@ -45,8 +41,7 @@ type Service struct {
 // Recibe el store como dependencia (inyección).
 func New(s store.Store) *Service {
 	return &Service{
-		store:  s,
-		logger: nil, // ⚠️ PROBLEMA: logger nil (lo veremos más abajo)
+		store: s,
 	}
 }
 
@@ -57,15 +52,12 @@ func New(s store.Store) *Service {
 func (s *Service) ObtenTodosLosLibros() ([]*model.Libro, error) {
 
 	// ❌ PELIGRO: si logger es nil esto va a causar panic
-	s.logger.Log("Estamos obteniendo los libros", "")
 
 	// Delegación al store
 	libros, err := s.store.GetAll()
 	if err != nil {
 
 		// Registro del error
-		s.logger.Log("El error es %v\n", err.Error())
-
 		return nil, err
 	}
 
@@ -81,6 +73,16 @@ func (s *Service) ObtenLibroPorId(id int) (*model.Libro, error) {
 	// No hay lógica de negocio adicional,
 	// simplemente se delega al store
 	return s.store.GetById(id)
+}
+
+func (s *Service) ObtenerLibosPorPrecio(precio float32) ([]*model.Libro, error) {
+	libros, err := s.store.GetByPrice(precio)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return libros, nil
 }
 
 // -----------------------------
