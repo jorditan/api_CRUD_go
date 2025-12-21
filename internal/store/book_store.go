@@ -32,9 +32,6 @@ type Store interface {
 	// Si no existe o hay error en la DB, devuelve error.
 	GetById(id int) (*model.Libro, error)
 
-	// Obtiene libros por un precio
-	GetByPrice(price float32) ([]*model.Libro, error)
-
 	// Create inserta un nuevo libro en la base de datos.
 	// Devuelve el libro creado con su ID asignado.
 	Create(libro *model.Libro) (*model.Libro, error)
@@ -102,7 +99,7 @@ func (s *store) GetAll() ([]*model.Libro, error) {
 		b := &model.Libro{}
 
 		// Se copian las columnas de la fila a los campos del struct
-		err := rows.Scan(&b.ID, &b.Titulo, &b.Autor, &b.Price)
+		err := rows.Scan(&b.ID, &b.Title, &b.Author, &b.Price)
 		if err != nil {
 			return nil, err
 		}
@@ -131,8 +128,8 @@ func (s *store) GetById(id int) (*model.Libro, error) {
 	// QueryRow se usa cuando se espera una sola fila
 	err := s.db.QueryRow(q, id).Scan(
 		&libro.ID,
-		&libro.Titulo,
-		&libro.Autor,
+		&libro.Title,
+		&libro.Author,
 	)
 
 	if err != nil {
@@ -162,7 +159,7 @@ func (s *store) GetByPrice(price float32) ([]*model.Libro, error) {
 	for rows.Next() {
 		b := &model.Libro{}
 
-		err := rows.Scan(&b.ID, &b.Titulo, &b.Autor, &b.Price)
+		err := rows.Scan(&b.ID, &b.Title, &b.Author, &b.Price)
 		if err != nil {
 			return nil, err
 		}
@@ -186,8 +183,8 @@ func (s *store) Create(libro *model.Libro) (*model.Libro, error) {
 
 	err := s.db.QueryRow(
 		q,
-		libro.Titulo,
-		libro.Autor,
+		libro.Title,
+		libro.Author,
 		libro.Price,
 	).Scan(&libro.ID)
 
@@ -209,7 +206,7 @@ func (s *store) Update(id int, libro *model.Libro) (*model.Libro, error) {
 	q := `UPDATE books SET title = $1, author = $2 WHERE id_book = $3`
 
 	// Ejecuta la actualización
-	_, err := s.db.Exec(q, libro.Titulo, libro.Autor, id)
+	_, err := s.db.Exec(q, libro.Title, libro.Author, id)
 	if err != nil {
 		return nil, err
 	}

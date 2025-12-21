@@ -75,16 +75,6 @@ func (s *Service) ObtenLibroPorId(id int) (*model.Libro, error) {
 	return s.store.GetById(id)
 }
 
-func (s *Service) ObtenerLibosPorPrecio(precio float32) ([]*model.Libro, error) {
-	libros, err := s.store.GetByPrice(precio)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return libros, nil
-}
-
 // -----------------------------
 // CREAR LIBRO
 // -----------------------------
@@ -93,7 +83,7 @@ func (s *Service) CrearLibro(libro model.Libro) (*model.Libro, error) {
 
 	// Regla de negocio:
 	// No se permite crear un libro sin título
-	if libro.Titulo == "" {
+	if libro.Title == "" {
 		return nil, errors.New("necesitamos el título")
 	}
 
@@ -109,7 +99,7 @@ func (s *Service) UpdateAlLibro(id int, libro model.Libro) (*model.Libro, error)
 
 	// Regla de negocio:
 	// El título es obligatorio
-	if libro.Titulo == "" {
+	if libro.Title == "" {
 		return nil, errors.New("necesitamos el título")
 	}
 
