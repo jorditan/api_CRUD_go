@@ -4,9 +4,10 @@ package service
 
 import (
 	// Paquete estándar para crear errores personalizados
-	"errors"
 
 	// Modelos de dominio
+	"database/sql"
+	"errors"
 	"main/internal/model"
 
 	// Capa de persistencia (store)
@@ -68,29 +69,40 @@ func (s *Service) GetAllBooks() ([]*model.Book, error) {
 
 func (s *Service) GetBookById(id int) (*model.Book, error) {
 
+	book, err := s.store.GetById(id)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+	}
 	// No hay lógica de negocio adicional,
 	// simplemente se delega al store
-	return s.store.GetById(id)
+	return book, nil
 }
 
 // -----------------------------
 // CREAR LIBRO
 // -----------------------------
 
-func (s *Service) CreateBook(book model.Book) (*model.Book, error) {
+func (s *Service) CreateBook(book *model.Book) (*model.Book, error) {
 
 	// Regla de negocio:
 	// No se permite crear un libro sin título
 	if book.Title == "" {
-		return nil, errors.New("Title is required")
+		return nil, ErrTitleRequired
 	}
 
 	if book.Author == "" {
-		return nil, errors.New("Author is required")
+		return nil, ErrAuthorRequired
+	}
+
+	if book.Publisher == "" {
+		return nil, ErrPublisherRequired
 	}
 
 	// Se delega la persistencia al store
-	return s.store.Create(&book)
+	return s.store.Create(book)
 }
 
 // -----------------------------
@@ -102,7 +114,7 @@ func (s *Service) UpdateBook(id int, book model.Book) (*model.Book, error) {
 	// Regla de negocio:
 	// El título es obligatorio
 	if book.Title == "" {
-		return nil, errors.New("necesitamos el título")
+		return nil, ErrTitleRequired
 	}
 
 	// Se delega al store

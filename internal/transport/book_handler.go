@@ -83,18 +83,18 @@ func (h *BookHandler) HandleBooks(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 
 		// Struct donde se cargará el JSON recibido
-		var libro model.Book
+		var book model.Book
 
 		// Decodifica el body JSON → struct
-		if err := json.NewDecoder(r.Body).Decode(&libro); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		// Llama al service para crear el libro
-		created, err := h.service.CreateBook(libro)
+		// Llama al service para crear el book
+		created, err := h.service.CreateBook(&book)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			handleServiceError(w, err)
 			return
 		}
 
@@ -107,7 +107,7 @@ func (h *BookHandler) HandleBooks(w http.ResponseWriter, r *http.Request) {
 	// MÉTODO NO SOPORTADO
 	// -----------------------------
 	default:
-		http.Error(w, "Método no disponible", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
@@ -126,7 +126,7 @@ func (h *BookHandler) HandleBookById(w http.ResponseWriter, r *http.Request) {
 	// Se convierte el ID a int
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "ID inválido", http.StatusBadRequest)
+		handleServiceError(w, service.ErrInvalidInput)
 		return
 	}
 
@@ -138,32 +138,32 @@ func (h *BookHandler) HandleBookById(w http.ResponseWriter, r *http.Request) {
 	// -----------------------------
 	case http.MethodGet:
 
-		libro, err := h.service.GetBookById(id)
+		book, err := h.service.GetBookById(id)
 		if err != nil {
-			http.Error(w, "No lo encontramos", http.StatusNotFound)
+			handleServiceError(w, err)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(libro)
+		json.NewEncoder(w).Encode(book)
 
 	// -----------------------------
 	// PUT /book/{id}
 	// -----------------------------
 	case http.MethodPut:
 
-		var libro model.Book
+		var book model.Book
 
 		// Decodifica el JSON recibido
-		if err := json.NewDecoder(r.Body).Decode(&libro); err != nil {
-			http.Error(w, "Input inválido", http.StatusBadRequest)
+		if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
+			handleServiceError(w, err)
 			return
 		}
 
 		// Llama al service para actualizar
-		updated, err := h.service.UpdateBook(id, libro)
+		updated, err := h.service.UpdateBook(id, book)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			handleServiceError(w, err)
 			return
 		}
 
@@ -176,7 +176,7 @@ func (h *BookHandler) HandleBookById(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 
 		if err := h.service.DeleteBook(id); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			handleServiceError(w, err)
 			return
 		}
 
@@ -187,6 +187,20 @@ func (h *BookHandler) HandleBookById(w http.ResponseWriter, r *http.Request) {
 	// MÉTODO NO SOPORTADO
 	// -----------------------------
 	default:
-		http.Error(w, "Método no disponible", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func handleServiceError(w http.ResponseWriter, err error) {
+	switch err {
+	case service.ErrNotFound:
+		http.Error(w, err.Error(), http.StatusNotFound)
+	case service.ErrTitleRequired,
+		service.ErrAuthorRequired,
+		service.ErrInvalidInput,
+		service.ErrPublisherRequired:
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	default:
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
