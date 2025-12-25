@@ -1,0 +1,8 @@
+{
+	"devDependencies": {
+		"flowbite-typography": "^1.0.5"
+	},
+	"dependencies": {
+		"lucide-react": "^0.562.0"
+	}
+}

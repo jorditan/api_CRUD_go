@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { Book } from './types/book-interface'
+import BookList from './components/BookList'
+import Navbar from './components/Navbar'
+import EmptyState from './views/EmptyState'
 
 function App() {
 
@@ -15,20 +18,18 @@ function App() {
       .catch(error => console.error('Error fetching books:', error))
   }, [])
 
+
   return (
     <>
-      <p className='font-bold text-2xl'>
-        Book List
-      </p>
-
-      <ul>
-
-        {books.map((book: Book) => (
-          <li key={book.id_book}>
-            {book.title} by {book.author}
-          </li>
-        ))}
-      </ul>
+      <Navbar />
+      <main className="pt-24 px-8">
+        <section className="flex flex-col gap-4">
+          {books.length === 0 ? (
+            <EmptyState/>
+          ) : null}
+          <BookList books={books} />
+        </section>
+      </main>
     </>
   )
 }
