@@ -9,20 +9,6 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  colors {
-    primary: {
-      soft: #F3F4FF;
-      medium: #6366F1;
-      hard: #4F46E5;
-    }
-    heading: #111827;
-    body: #6B7280;
-  }
-  borderRadius {
-    base: 12px;
-  }
-}
 
 main {
   @apply font-mono

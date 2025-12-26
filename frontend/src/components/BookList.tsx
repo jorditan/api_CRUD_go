@@ -8,7 +8,7 @@ interface Props {
 
 const BookList: React.FC<Props> = ({ books }) => {
   return (
-    <div className='flex flex-wrap gap-2'>
+    <div className='flex flex-wrap gap-4'>
       {books.map((book: Book) => (
         <BookItem key={book.id_book} book={book} />
       ))}

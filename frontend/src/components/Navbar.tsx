@@ -1,6 +1,8 @@
+import { changeTheme } from "../theme/themeController"
 import Button from "./Button"
 import ButtonIcon from "./ButtonIcon"
 import { SunMoon } from "lucide-react"
+import ModalDialog from "./ModalDialog"
 
 const Navbar = () => {
   return (
@@ -16,7 +18,8 @@ const Navbar = () => {
   <div className="inline-flex md:order-2 gap-4 space-x-3 md:space-x-0 rtl:space-x-reverse">
       <Button label="Añadir libro" 
       />
-      <ButtonIcon icon={<SunMoon />} idTooltip="themeButton" tooltipText="Cambiar tema" />
+      <ModalDialog title="Añadir libro" buttonPrimaryText="Guardar" buttonSecondaryText="Cancelar" />
+      <ButtonIcon onClick={changeTheme} icon={<SunMoon />} idTooltip="themeButton" tooltipText="Cambiar tema" />
   </div>
   <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
     <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-default rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral-primary">

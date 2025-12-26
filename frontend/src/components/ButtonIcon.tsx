@@ -11,7 +11,7 @@ interface Props {
 const ButtonIcon:React.FC<Props> = ({ label, onClick, tooltipText, idTooltip, icon }) => {
   return (
     <>
-      <button onClick={onClick} data-tooltip-target={idTooltip} data-tooltip-style="light" type="button" className="inline-flex items-center justify-center  text-fg-brand bg-neutral-primary border border-brand hover:bg-brand hover:text-white focus:ring-4 focus:ring-brand-subtle rounded-base w-10 h-10 focus:outline-none">
+      <button onClick={onClick} data-tooltip-target={idTooltip} data-tooltip-style="light" type="button" className="toggle-full-view flex items-center justify-center w-10 h-unset text-xs font-medium text-body bg-neutral-primary-medium border border-default-medium rounded-base focus:outline-none hover:bg-neutral-secondary-strong hover:border-default-strong hover:text-heading focus:z-10 focus:ring-2 focus:ring-neutral-tertiary">
         {icon}
         <span className="sr-only">{label}</span>
       </button>
