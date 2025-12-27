@@ -21,14 +21,14 @@ BookShelf provides a simple REST API for managing books and a frontend UI to int
 
 ## Quick start
 
-1) Run the backend
+1. Run the backend
 
 ```bash
 cd backend
 go run ./cmd/api
 ```
 
-2) Run the frontend (using pnpm)
+2. Run the frontend (using pnpm)
 
 ```bash
 cd frontend

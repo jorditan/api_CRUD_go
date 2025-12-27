@@ -1,8 +1,10 @@
 {
-	"devDependencies": {
-		"flowbite-typography": "^1.0.5"
-	},
-	"dependencies": {
-		"lucide-react": "^0.562.0"
-	}
+  "devDependencies": {
+    "flowbite-typography": "^1.0.5",
+    "prettier": "3.7.4"
+  },
+  "dependencies": {
+    "lucide-react": "^0.562.0",
+    "react-router": "^7.11.0"
+  }
 }

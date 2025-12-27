@@ -21,13 +21,11 @@ This project is designed to be extended in the future to support multiple users.
 
 The project follows a layered architecture with a clear separation of concerns:
 
-
-
-| Layer | Responsibility |
-| :--- | :--- |
-| **Handlers (Transport)** | Manages HTTP requests and responses. |
-| **Service** | Contains business rules, validations, and domain errors. |
-| **Store / Repository** | Handles persistence and direct communication with the database. |
+| Layer                    | Responsibility                                                  |
+| :----------------------- | :-------------------------------------------------------------- |
+| **Handlers (Transport)** | Manages HTTP requests and responses.                            |
+| **Service**              | Contains business rules, validations, and domain errors.        |
+| **Store / Repository**   | Handles persistence and direct communication with the database. |
 
 ---
 
@@ -43,27 +41,28 @@ The project follows a layered architecture with a clear separation of concerns:
 ## 📊 Data Model
 
 ### Book
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `id` | integer | Primary key |
-| `title` | string | Book title (required) |
-| `author` | string | Book author (required) |
-| `publisher` | string | Book publisher |
-| `review` | string | Personal review (nullable) |
-| `price` | numeric | Book price (nullable) |
-| `read_date` | date | Date when the book was read (nullable) |
+
+| Field       | Type    | Description                            |
+| :---------- | :------ | :------------------------------------- |
+| `id`        | integer | Primary key                            |
+| `title`     | string  | Book title (required)                  |
+| `author`    | string  | Book author (required)                 |
+| `publisher` | string  | Book publisher                         |
+| `review`    | string  | Personal review (nullable)             |
+| `price`     | numeric | Book price (nullable)                  |
+| `read_date` | date    | Date when the book was read (nullable) |
 
 ---
 
 ## 🛣️ API Endpoints
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/books` | Get all books |
-| `POST` | `/books` | Create a new book |
-| `GET` | `/book/{id}` | Get a book by ID |
-| `PUT` | `/book/{id}` | Update a book |
-| `DELETE` | `/book/{id}` | Delete a book |
+| Method   | Endpoint     | Description       |
+| :------- | :----------- | :---------------- |
+| `GET`    | `/books`     | Get all books     |
+| `POST`   | `/books`     | Create a new book |
+| `GET`    | `/book/{id}` | Get a book by ID  |
+| `PUT`    | `/book/{id}` | Update a book     |
+| `DELETE` | `/book/{id}` | Delete a book     |
 
 ### Example Request (Create a Book)
 
@@ -138,3 +137,4 @@ Apply database modeling and SQL concepts.
 Build a clean, maintainable REST API.
 
 Improve technical English communication within a codebase.
+```
